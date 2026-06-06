@@ -47,6 +47,9 @@
         </div>
 
         <div class="card" id="question-card">
+          <button class="back-btn" id="back-btn" type="button" hidden aria-label="前の質問に戻る">
+            ← 戻る
+          </button>
           <p class="card__q-label">Q<span id="q-label-num">1</span></p>
           <h2 class="card__question" id="question-text" aria-live="polite"></h2>
 
@@ -62,6 +65,11 @@
           <p class="result-card__score">
             <span id="result-score">0</span><span class="result-card__score-max"> / 24点</span>
           </p>
+
+          <div class="gauge" aria-hidden="true">
+            <div class="gauge__fill" id="gauge-fill"></div>
+          </div>
+
           <p class="result-card__body" id="result-body"></p>
 
           <div class="advice">

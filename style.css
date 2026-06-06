@@ -244,6 +244,38 @@ body {
   box-shadow: var(--shadow);
 }
 
+/* 戻るボタン */
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 4px 4px 10px;
+  margin: -6px 0 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease, transform 0.08s ease;
+}
+
+.back-btn[hidden] {
+  display: none;
+}
+
+.back-btn:hover {
+  color: var(--accent);
+}
+
+.back-btn:active {
+  transform: scale(0.94);
+}
+
+.back-btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
 .card__q-label {
   display: inline-block;
   background: var(--accent);
@@ -312,12 +344,33 @@ body {
 }
 
 .result-card {
+  --type-color: var(--accent);
+  --type-glow: rgba(255, 214, 10, 0.4);
   background: linear-gradient(160deg, var(--bg-2), #0d1430);
-  border: 2px solid var(--accent);
+  border: 2px solid var(--type-color);
   border-radius: var(--radius);
   padding: 28px 22px;
-  box-shadow: 0 0 0 4px rgba(255, 214, 10, 0.08), var(--shadow);
+  box-shadow: 0 0 0 4px var(--type-glow), var(--shadow);
   text-align: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* タイプ別カラー（data-type で切り替え） */
+.result-card[data-type="0"] { /* デジタル僧侶: 静かな青緑 */
+  --type-color: #34e0c4;
+  --type-glow: rgba(52, 224, 196, 0.22);
+}
+.result-card[data-type="1"] { /* ドパベビー: 黄色 */
+  --type-color: #ffd60a;
+  --type-glow: rgba(255, 214, 10, 0.22);
+}
+.result-card[data-type="2"] { /* ドーパミン小僧: オレンジ */
+  --type-color: #ff9f0a;
+  --type-glow: rgba(255, 159, 10, 0.25);
+}
+.result-card[data-type="3"] { /* 大病ドパガキ民: 赤 */
+  --type-color: #ff3b30;
+  --type-glow: rgba(255, 59, 48, 0.28);
 }
 
 .result-card__label {
@@ -329,10 +382,17 @@ body {
 .result-card__name {
   font-size: 2rem;
   font-weight: 900;
-  color: var(--accent);
+  color: var(--type-color);
   letter-spacing: 0.02em;
   margin-bottom: 12px;
-  text-shadow: 0 2px 14px rgba(255, 214, 10, 0.4);
+  text-shadow: 0 2px 18px var(--type-glow);
+  animation: namePop 0.55s cubic-bezier(0.18, 1.4, 0.4, 1) both;
+}
+
+@keyframes namePop {
+  0%   { opacity: 0; transform: scale(0.4) rotate(-4deg); }
+  60%  { opacity: 1; transform: scale(1.12) rotate(1.5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
 }
 
 .result-card__score {
@@ -345,6 +405,24 @@ body {
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-dim);
+}
+
+/* 点数ゲージ */
+.gauge {
+  height: 16px;
+  background: var(--bg-3);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 4px 0 22px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.gauge__fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--type-color, var(--accent)), #ff9f0a);
+  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .result-card__body {
@@ -365,7 +443,7 @@ body {
   font-size: 1.05rem;
   font-weight: 800;
   margin-bottom: 12px;
-  color: var(--accent);
+  color: var(--type-color);
 }
 
 .advice__list {

@@ -146,7 +146,7 @@ const ADVICE = [
    状態
    -------------------------------------------- */
 let currentIndex = 0; // 現在の質問番号（0始まり）
-let totalScore = 0; // 合計点
+let answers = []; // 各問の選択肢index（戻る対応 / 再計算用）
 
 /* --------------------------------------------
    DOM参照
@@ -167,11 +167,16 @@ const el = {
   qLabelNum: document.getElementById("q-label-num"),
   questionText: document.getElementById("question-text"),
   options: document.getElementById("options"),
+  backBtn: document.getElementById("back-btn"),
+  resultCard: document.getElementById("result-card"),
   resultName: document.getElementById("result-name"),
   resultScore: document.getElementById("result-score"),
+  gaugeFill: document.getElementById("gauge-fill"),
   resultBody: document.getElementById("result-body"),
   adviceList: document.getElementById("advice-list"),
 };
+
+const MAX_SCORE = QUESTIONS.length * 3; // 24点
 
 /* --------------------------------------------
    画面切り替え
@@ -188,7 +193,7 @@ function showScreen(key) {
    -------------------------------------------- */
 function startQuiz() {
   currentIndex = 0;
-  totalScore = 0;
+  answers = [];
   el.totalNum.textContent = QUESTIONS.length;
   showScreen("quiz");
   renderQuestion();
@@ -212,25 +217,43 @@ function renderQuestion() {
   const progressEl = document.querySelector(".progress");
   if (progressEl) progressEl.setAttribute("aria-valuenow", String(num));
 
+  // 戻るボタンは2問目以降のみ表示
+  el.backBtn.hidden = currentIndex === 0;
+
   // 選択肢生成
   el.options.innerHTML = "";
-  question.options.forEach((opt) => {
+  question.options.forEach((opt, optIndex) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "option";
     btn.textContent = opt.text;
-    btn.addEventListener("click", () => handleAnswer(opt.point, btn));
+    // 戻ってきた時、前回の選択をハイライト表示
+    if (answers[currentIndex] === optIndex) {
+      btn.classList.add("is-pressed");
+    }
+    btn.addEventListener("click", () => handleAnswer(optIndex, btn));
     el.options.appendChild(btn);
   });
 }
 
 /* --------------------------------------------
+   一つ前の質問へ戻る
+   -------------------------------------------- */
+function goBack() {
+  if (currentIndex === 0) return;
+  currentIndex -= 1;
+  renderQuestion();
+}
+
+/* --------------------------------------------
    回答処理
    -------------------------------------------- */
-function handleAnswer(point, btn) {
+function handleAnswer(optIndex, btn) {
+  // 回答を記録（戻って選び直した場合は上書き）
+  answers[currentIndex] = optIndex;
+
   // 押した感を出してから次へ
   btn.classList.add("is-pressed");
-  totalScore += point;
 
   // 連打防止
   const allBtns = el.options.querySelectorAll(".option");
@@ -247,23 +270,40 @@ function handleAnswer(point, btn) {
 }
 
 /* --------------------------------------------
+   合計点を計算
+   -------------------------------------------- */
+function calcScore() {
+  return answers.reduce(
+    (sum, optIndex, qIndex) => sum + QUESTIONS[qIndex].options[optIndex].point,
+    0
+  );
+}
+
+/* --------------------------------------------
    結果判定
    -------------------------------------------- */
+function getResultIndex(score) {
+  const idx = RESULTS.findIndex((r) => score >= r.min && score <= r.max);
+  return idx === -1 ? RESULTS.length - 1 : idx;
+}
+
 function getResult(score) {
-  return (
-    RESULTS.find((r) => score >= r.min && score <= r.max) ||
-    RESULTS[RESULTS.length - 1]
-  );
+  return RESULTS[getResultIndex(score)];
 }
 
 /* --------------------------------------------
    結果描画
    -------------------------------------------- */
 function showResult() {
-  const result = getResult(totalScore);
+  const score = calcScore();
+  const typeIndex = getResultIndex(score);
+  const result = RESULTS[typeIndex];
+
+  // タイプ別カラー切り替え
+  el.resultCard.setAttribute("data-type", String(typeIndex));
 
   el.resultName.textContent = result.name;
-  el.resultScore.textContent = totalScore;
+  el.resultScore.textContent = score;
 
   // 改行を <br> として安全に表示
   el.resultBody.innerHTML = "";
@@ -281,13 +321,26 @@ function showResult() {
   });
 
   showScreen("result");
+
+  // 名前のポップ演出を再生（再診断時もやり直す）
+  el.resultName.style.animation = "none";
+  // ゲージは0からアニメさせる
+  el.gaugeFill.style.width = "0";
+
+  // 次フレームで反映してトランジション/アニメを発火
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      el.resultName.style.animation = "";
+      el.gaugeFill.style.width = (score / MAX_SCORE) * 100 + "%";
+    });
+  });
 }
 
 /* --------------------------------------------
    Xシェア
    -------------------------------------------- */
 function shareToX() {
-  const result = getResult(totalScore);
+  const result = getResult(calcScore());
   const text =
     `私は【${result.name}】でした。\n` +
     "スマホを開いているのではない。スマホに開かされている。\n" +
@@ -303,3 +356,4 @@ function shareToX() {
 el.startBtn.addEventListener("click", startQuiz);
 el.retryBtn.addEventListener("click", startQuiz);
 el.shareBtn.addEventListener("click", shareToX);
+el.backBtn.addEventListener("click", goBack);
