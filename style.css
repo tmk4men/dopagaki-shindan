@@ -343,128 +343,25 @@ body {
   padding: 12px 8px 24px;
 }
 
-.result-card {
-  --type-color: var(--accent);
-  --type-glow: rgba(255, 214, 10, 0.4);
-  background: linear-gradient(160deg, var(--bg-2), #0d1430);
-  border: 2px solid var(--type-color);
+/* 結果画像（タイプごとの1枚絵） */
+.result-image-wrap {
   border-radius: var(--radius);
-  padding: 28px 22px;
-  box-shadow: 0 0 0 4px var(--type-glow), var(--shadow);
-  text-align: center;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* タイプ別カラー（data-type で切り替え） */
-.result-card[data-type="0"] { /* デジタル僧侶: 静かな青緑 */
-  --type-color: #34e0c4;
-  --type-glow: rgba(52, 224, 196, 0.22);
-}
-.result-card[data-type="1"] { /* ドパベビー: 黄色 */
-  --type-color: #ffd60a;
-  --type-glow: rgba(255, 214, 10, 0.22);
-}
-.result-card[data-type="2"] { /* ドーパミン小僧: オレンジ */
-  --type-color: #ff9f0a;
-  --type-glow: rgba(255, 159, 10, 0.25);
-}
-.result-card[data-type="3"] { /* 大病ドパガキ民: 赤 */
-  --type-color: #ff3b30;
-  --type-glow: rgba(255, 59, 48, 0.28);
-}
-
-.result-card__label {
-  color: var(--text-dim);
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.result-card__name {
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--type-color);
-  letter-spacing: 0.02em;
-  margin-bottom: 12px;
-  text-shadow: 0 2px 18px var(--type-glow);
-  animation: namePop 0.55s cubic-bezier(0.18, 1.4, 0.4, 1) both;
-}
-
-@keyframes namePop {
-  0%   { opacity: 0; transform: scale(0.4) rotate(-4deg); }
-  60%  { opacity: 1; transform: scale(1.12) rotate(1.5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0); }
-}
-
-.result-card__score {
-  font-size: 1.6rem;
-  font-weight: 900;
-  margin-bottom: 18px;
-}
-
-.result-card__score-max {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-dim);
-}
-
-/* 点数ゲージ */
-.gauge {
-  height: 16px;
-  background: var(--bg-3);
-  border-radius: 999px;
   overflow: hidden;
-  margin: 4px 0 22px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.18), var(--shadow);
+  line-height: 0;
+  animation: resultPop 0.55s cubic-bezier(0.18, 1.4, 0.4, 1) both;
 }
 
-.gauge__fill {
-  height: 100%;
-  width: 0;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--type-color, var(--accent)), #ff9f0a);
-  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+.result-image {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.result-card__body {
-  font-size: 1rem;
-  text-align: left;
-  color: var(--text);
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 22px;
-}
-
-.advice {
-  text-align: left;
-}
-
-.advice__title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin-bottom: 12px;
-  color: var(--type-color);
-}
-
-.advice__list {
-  list-style: none;
-}
-
-.advice__list li {
-  position: relative;
-  padding-left: 26px;
-  margin-bottom: 10px;
-  font-size: 0.96rem;
-  color: var(--text);
-}
-
-.advice__list li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: var(--danger);
-  font-weight: 900;
+@keyframes resultPop {
+  0%   { opacity: 0; transform: scale(0.85) translateY(10px); }
+  60%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .result-actions {

@@ -92,6 +92,7 @@ const RESULTS = [
     min: 0,
     max: 6,
     name: "デジタル僧侶",
+    image: "result-0.webp",
     body:
       "あなたはスマホに勝っている側の人間です。\n" +
       "通知に心を乱されず、SNSの海にも沈まない。\n" +
@@ -101,6 +102,7 @@ const RESULTS = [
     min: 7,
     max: 12,
     name: "ドパベビー",
+    image: "result-1.webp",
     body:
       "まだ軽症です。\n" +
       "でも退屈になると、スマホに手が伸びる。\n" +
@@ -111,6 +113,7 @@ const RESULTS = [
     min: 13,
     max: 18,
     name: "ドーパミン小僧",
+    image: "result-2.webp",
     body:
       "だいぶ焼かれています。\n" +
       "暇、疲れ、不安、全部スマホで埋めがち。\n" +
@@ -121,6 +124,7 @@ const RESULTS = [
     min: 19,
     max: 24,
     name: "大病ドパガキ民",
+    image: "result-3.webp",
     body:
       "かなり重症です。\n" +
       "スマホを開いているのではありません。\n" +
@@ -130,17 +134,7 @@ const RESULTS = [
   },
 ];
 
-/* --------------------------------------------
-   共通改善アドバイス
-   -------------------------------------------- */
-const ADVICE = [
-  "SNS、動画、ゲームアプリを1画面目から消す",
-  "通知バッジをオフにする",
-  "使っていないアプリを削除する",
-  "ホーム画面を1ページだけにする",
-  "背景をシンプルにする",
-  "スマホを開く前に「何をするために開くか」を決める",
-];
+/* 改善アドバイスは各タイプの結果画像に描き込み済み */
 
 /* --------------------------------------------
    状態
@@ -169,14 +163,8 @@ const el = {
   options: document.getElementById("options"),
   backBtn: document.getElementById("back-btn"),
   resultCard: document.getElementById("result-card"),
-  resultName: document.getElementById("result-name"),
-  resultScore: document.getElementById("result-score"),
-  gaugeFill: document.getElementById("gauge-fill"),
-  resultBody: document.getElementById("result-body"),
-  adviceList: document.getElementById("advice-list"),
+  resultImage: document.getElementById("result-image"),
 };
-
-const MAX_SCORE = QUESTIONS.length * 3; // 24点
 
 /* --------------------------------------------
    画面切り替え
@@ -299,39 +287,18 @@ function showResult() {
   const typeIndex = getResultIndex(score);
   const result = RESULTS[typeIndex];
 
-  // タイプ別カラー切り替え
+  // タイプ別の1枚絵を表示
   el.resultCard.setAttribute("data-type", String(typeIndex));
-
-  el.resultName.textContent = result.name;
-  el.resultScore.textContent = score;
-
-  // 改行を <br> として安全に表示
-  el.resultBody.innerHTML = "";
-  result.body.split("\n").forEach((line, i) => {
-    if (i > 0) el.resultBody.appendChild(document.createElement("br"));
-    el.resultBody.appendChild(document.createTextNode(line));
-  });
-
-  // アドバイス
-  el.adviceList.innerHTML = "";
-  ADVICE.forEach((text) => {
-    const li = document.createElement("li");
-    li.textContent = text;
-    el.adviceList.appendChild(li);
-  });
+  el.resultImage.src = result.image;
+  el.resultImage.alt = `診断結果：${result.name}（${score}点）`;
 
   showScreen("result");
 
-  // 名前のポップ演出を再生（再診断時もやり直す）
-  el.resultName.style.animation = "none";
-  // ゲージは0からアニメさせる
-  el.gaugeFill.style.width = "0";
-
-  // 次フレームで反映してトランジション/アニメを発火
+  // ポップ演出を再診断時もやり直す
+  el.resultCard.style.animation = "none";
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
-      el.resultName.style.animation = "";
-      el.gaugeFill.style.width = (score / MAX_SCORE) * 100 + "%";
+      el.resultCard.style.animation = "";
     });
   });
 }
