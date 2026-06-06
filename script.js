@@ -160,7 +160,6 @@ const screens = {
 
 const el = {
   startBtn: document.getElementById("start-btn"),
-  retryBtn: document.getElementById("retry-btn"),
   shareBtn: document.getElementById("share-btn"),
   progressBar: document.getElementById("progress-bar"),
   currentNum: document.getElementById("current-num"),
@@ -348,6 +347,5 @@ function shareToX() {
    イベント登録
    -------------------------------------------- */
 el.startBtn.addEventListener("click", startQuiz);
-el.retryBtn.addEventListener("click", startQuiz);
 el.shareBtn.addEventListener("click", shareToX);
 el.backBtn.addEventListener("click", goBack);
