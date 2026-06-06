@@ -5,6 +5,9 @@
 
 "use strict";
 
+/* 公開URL（シェアページ生成に使用） */
+const BASE_URL = "https://tmk4men.github.io/dopagaki-shindan";
+
 /* --------------------------------------------
    質問データ（配列で管理 / 追加しやすい構造）
    各選択肢: { text: 表示文, point: 点数 }
@@ -93,6 +96,7 @@ const RESULTS = [
     max: 6,
     name: "デジタル僧侶",
     image: "result-0.webp",
+    share: "スマホに開かされているのではない。スマホを開いているのだ。",
     body:
       "あなたはスマホに勝っている側の人間です。\n" +
       "通知に心を乱されず、SNSの海にも沈まない。\n" +
@@ -103,6 +107,7 @@ const RESULTS = [
     max: 12,
     name: "ドパベビー",
     image: "result-1.webp",
+    share: "まだ間に合う。退屈に、スマホ以外の手を伸ばそう。",
     body:
       "まだ軽症です。\n" +
       "でも退屈になると、スマホに手が伸びる。\n" +
@@ -114,6 +119,7 @@ const RESULTS = [
     max: 18,
     name: "ドーパミン小僧",
     image: "result-2.webp",
+    share: "ホーム画面に、毎日脳をビンタされている。",
     body:
       "だいぶ焼かれています。\n" +
       "暇、疲れ、不安、全部スマホで埋めがち。\n" +
@@ -125,6 +131,7 @@ const RESULTS = [
     max: 24,
     name: "大病ドパガキ民",
     image: "result-3.webp",
+    share: "スマホを開いているのではない。スマホに開かされている。",
     body:
       "かなり重症です。\n" +
       "スマホを開いているのではありません。\n" +
@@ -164,7 +171,11 @@ const el = {
   backBtn: document.getElementById("back-btn"),
   resultCard: document.getElementById("result-card"),
   resultImage: document.getElementById("result-image"),
+  resultTypeTag: document.getElementById("result-type-tag"),
 };
+
+/* 現在の結果タイプ（シェア時に参照） */
+let currentTypeIndex = 0;
 
 /* --------------------------------------------
    画面切り替え
@@ -286,11 +297,18 @@ function showResult() {
   const score = calcScore();
   const typeIndex = getResultIndex(score);
   const result = RESULTS[typeIndex];
+  currentTypeIndex = typeIndex;
 
   // タイプ別の1枚絵を表示
   el.resultCard.setAttribute("data-type", String(typeIndex));
   el.resultImage.src = result.image;
   el.resultImage.alt = `診断結果：${result.name}（${score}点）`;
+
+  // 上部のタイプ表示
+  if (el.resultTypeTag) {
+    const n = String(typeIndex + 1).padStart(2, "0");
+    el.resultTypeTag.textContent = `TYPE ${n} ／ ${result.name}`;
+  }
 
   showScreen("result");
 
@@ -307,13 +325,22 @@ function showResult() {
    Xシェア
    -------------------------------------------- */
 function shareToX() {
-  const result = getResult(calcScore());
+  const typeIndex = currentTypeIndex;
+  const result = RESULTS[typeIndex];
+
   const text =
     `私は【${result.name}】でした。\n` +
-    "スマホを開いているのではない。スマホに開かされている。\n" +
+    result.share + "\n" +
     "#ドパガキ診断";
 
-  const url = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
+  // タイプ別シェアページに飛ばす → 結果画像がOGPサムネで表示される
+  const shareUrl = `${BASE_URL}/s/${typeIndex}.html`;
+
+  const url =
+    "https://twitter.com/intent/tweet?text=" +
+    encodeURIComponent(text) +
+    "&url=" +
+    encodeURIComponent(shareUrl);
   window.open(url, "_blank", "noopener");
 }
 

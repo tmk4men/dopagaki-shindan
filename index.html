@@ -21,6 +21,9 @@
   <meta name="twitter:description" content="通知、SNS、ショート動画、アプリの誘惑。あなたのホーム画面は、脳にやさしいですか？8問で診断。" />
   <meta name="twitter:image" content="https://tmk4men.github.io/dopagaki-shindan/ogp.jpg" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -35,6 +38,7 @@
           <span class="badge badge--3">99+</span>
         </div>
 
+        <span class="kicker">SMARTPHONE BRAIN CHECK</span>
         <h1 class="title">
           ドパガキ<span class="title__accent">診断</span>
         </h1>
@@ -75,12 +79,14 @@
 
       <!-- 結果画面 -->
       <section class="screen screen--result" id="screen-result" hidden>
+        <span class="result-type-tag" id="result-type-tag">YOUR TYPE</span>
         <div class="result-image-wrap" id="result-card">
           <img class="result-image" id="result-image" src="" alt="診断結果" />
         </div>
 
         <div class="result-actions">
           <button class="btn btn--share" id="share-btn" type="button">
+            <svg class="x-logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             Xで結果をシェア
           </button>
           <button class="btn btn--retry" id="retry-btn" type="button">
